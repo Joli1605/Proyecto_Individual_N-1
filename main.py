@@ -6,10 +6,6 @@ import uvicorn
 from datetime import datetime
 import re
 from sklearn.neighbors import NearestNeighbors
-from flask import Flask
-
-app = Flask(__name__)
-app.config['API_NAME'] = 'Mi API Proyecto Individual N°1'
 
 
 # Cargar datos desde el archivo CSV y convertirlos a un dataframe
@@ -59,7 +55,8 @@ async def cantidad_filmaciones_dia(dia):
     #Por cada coincidencia, se agrega 1 al total de filmaciones.
     cantidad = sum(1 for fecha in fecha_formato_correcto if datetime.strptime(fecha, '%Y-%m-%d').weekday() == dias_semana[dia])
     
-    return f"{cantidad} cantidad de películas fueron estrenadas en los días {dia}"
+    return {'cantidad': f"{cantidad} 'de peliculas fueron estrenadas'",
+            'mes': mes}
 
 
 @app.get("/score_titulo")
