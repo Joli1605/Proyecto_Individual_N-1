@@ -6,6 +6,12 @@ import uvicorn
 from datetime import datetime
 import re
 from sklearn.neighbors import NearestNeighbors
+from flask import Flask
+
+app = Flask(__name__)
+app.config['API_NAME'] = 'Mi API Proyecto Individual N°1'
+
+
 # Cargar datos desde el archivo CSV y convertirlos a un dataframe
 
 df_peliculas=pd.read_csv('./Data/DataLimpia.csv')
