@@ -29,12 +29,12 @@ async def cantidad_filmaciones_mes(mes):
 }
 #Si no está presente, se retorna un mensaje indicando que el mes es inválido
     if mes not in month_map:
-        return  f"Mes inválido: {mes}"
+        return  {"mes": "Mes inválido"}
     #iterar sobre las fechas de estreno y obtener el total de las filmaciones.
     #Verifica si el mes de cada fecha coincide con el número del mes obtenido del diccionario month_map. 
     #Por cada coincidencia, se agrega 1 al total de filmaciones.
     cantidad = sum(1 for fecha in df_peliculas['release_date'] if datetime.strptime(fecha, '%Y-%m-%d').month == month_map[mes])
-    return f"{cantidad} cantidad de películas fueron estrenadas en el mes de {mes}"
+    return {"mes": mes, "cantidad_peliculas": cantidad}
 
 @app.get("/cantidad_filmaciones_dia")
 async def cantidad_filmaciones_dia(dia):
@@ -46,7 +46,7 @@ async def cantidad_filmaciones_dia(dia):
     }
     #sino se encuentra return
     if dia not in dias_semana:
-        return  f"Día inválido: {dia}"
+        return {"Día": "Día inválido"}
     # re.match() para encontrar coincidencias con el patrón de fecha.
     #creamos una lista fecha_formato_correcto
     fecha_formato_correcto = [fecha for fecha in df_peliculas['release_date'] if re.match(r'\d{4}-\d{2}-\d{2}', fecha)]
@@ -55,7 +55,7 @@ async def cantidad_filmaciones_dia(dia):
     #Por cada coincidencia, se agrega 1 al total de filmaciones.
     cantidad = sum(1 for fecha in fecha_formato_correcto if datetime.strptime(fecha, '%Y-%m-%d').weekday() == dias_semana[dia])
     
-    return f"{cantidad} cantidad de peliculas fueron estrenadas {dia}"
+    return {"Día": dia, "cantidad_peliculas": cantidad}
 
 @app.get("/score_titulo")
 async def score_titulo(titulo_de_la_filmacion):
@@ -69,12 +69,12 @@ async def score_titulo(titulo_de_la_filmacion):
         pelicula = df_peliculas[df_peliculas['title'].str.lower().str.contains(titulo_de_la_filmacion.lower())]
     #empty. Si está vacío
     if pelicula.empty:
-        return "No se encontraron películas en la base de datos con la palabra clave ingresada."
+        return {"nombre_pelicula": "Inválido"}
     #Si se encontró una película en alguno de los pasos anteriores, se extraen los datos relevantes de la primera fila de pelicula. 
     titulo = pelicula['title'].iloc[0] #se obtiene el título de la película.
     año = str(pelicula['release_year'].iloc[0])#se obtiene el año de lanzamiento y se convierte a cadena de caracteres.
     score = pelicula['vote_average'].iloc[0] #se obtiene el puntaje de la película.
-    return f"La película {titulo} fue lanzada en el año {año} y tiene un puntaje de {score}"
+    return {"nombre_pelicula": titulo, "lanzamiento": año, "score": score}
     
 
 
@@ -88,7 +88,7 @@ async def votos_titulo(titulo_de_la_filmacion):
     # No se encontraron películas con la palabra clave
     if pelicula.empty:
         
-        return "No se encontraron películas en la base de datos con la palabra clave ingresada."
+        return {"nombre_pelicula": "Inválido"}
     
     # Obtener la cantidad de votos y el valor promedio de las votaciones
     cantidad_votos = pelicula['vote_count'].iloc[0] # se obtiene la cantidad de votos de la película. 
@@ -96,13 +96,9 @@ async def votos_titulo(titulo_de_la_filmacion):
     año = str(pelicula['release_year'].iloc[0]) #se obtiene el año de lanzamiento y se convierte a cadena de caracteres.
     #Si no cuenta con al menos 2000 valoraciones.
     if cantidad_votos < 2000:
-        return f"La película {pelicula['title'].iloc[0]} no cumple con la condición de tener al menos 2000 valoraciones."
+        return {"nombre_pelicula": pelicula['title'].iloc[0], "status": "Invalida, no cumple con > 2000 valoraciónes"}
 
-    mensaje = f"La película {pelicula['title'].iloc[0]} fue estrenada en el año {año}."
-    mensaje += f" La misma cuenta con un total de {cantidad_votos} valoraciones"
-    mensaje += f" y tiene un promedio de {promedio_votos}."
-
-    return mensaje
+    return {"nombre_pelicula": pelicula['title'].iloc[0], "lanzamiento": año, "valoración": cantidad_votos, "promedio": promedio_votos }
 
 @app.get("/get_actor")
 def get_actor(nombre_actor):
@@ -116,7 +112,7 @@ def get_actor(nombre_actor):
         actor_data= df_cast[df_cast['cast_name'].str.lower().str.contains(nombre_actor.lower())]
     # No se encontraron actores con la palabra clave
     if actor_data.empty:
-        return f"No se encontraron actores en la base de datos con la palabra clave {nombre_actor} ingresada."
+        return {"nombre_actor": "Inválido"}
 
     # Si se encontró un actor
     id_actor = int(actor_data['id_actors'].iloc[0]) #se obtiene el ID del actor y se convierte a entero
@@ -133,8 +129,7 @@ def get_actor(nombre_actor):
 
     promedio_retorno = movie_return / movie_count if movie_count > 0 else 0  #se calcula el promedio de retorno dividiendo movie_return/ movie_count siempre que movie_count sea mayor a cero, sino se asigna 0.
     
-    return f"El actor {name_actor} ha participado en {movie_count} películas, ha conseguido un retorno de {round(movie_return, 2)} con un promedio de {round(promedio_retorno, 2)} por filmación."
-
+    return {"nombre_actor": name_actor, "cantidad_peliculas": movie_count, "retorno": round(movie_return, 2), "promedio": round(promedio_retorno, 2)} 
 
 
 @app.get("/get_director")
@@ -166,7 +161,7 @@ def get_director(nombre_director):
                         })
     #si no se encontró ningún director con el nombre ingresado returna lo siguiente.
     if name_director == "":
-         return f"El nombre {nombre_director} ingresado no es valido, recuerde ingresar nombre y apellido"                
+         return {"nombre_director": "Inválido"}
     
     return {
         "name_director": name_director,
@@ -194,7 +189,7 @@ def sistema_recomendacion (titulo_peli):
     if peli_index.empty: 
         peli_index= df_peliculas[df_peliculas['title'].str.lower().str.contains(titulo_peli)]
     if peli_index.empty:
-        return f'No existe {titulo_peli}  en esta base de datos'
+        return [{"nombre_pelicula", "Inválido"}]
     peli_index = peli_index.index[0]
     
 #encontramos los indices de las peliculas que mas similares a la pelicula ingresada.
