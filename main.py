@@ -189,7 +189,12 @@ def sistema_recomendacion (titulo_peli):
 #Convertimos el título de la película ingresada a minúsculas
     titulo_peli = titulo_peli.lower()
 #buscamos el indice de la pelicula ingresada.
-    peli_index = df_peliculas[df_peliculas['title'].str.lower()== titulo_peli].index[0]
+    peli_index = df_peliculas[df_peliculas['title'].str.lower()== titulo_peli]
+    if peli_index.empty: 
+        peli_index= df_peliculas[df_peliculas['title'].str.lower().str.contains(titulo_peli)]
+    if peli_index.empty:
+        return f'No existe {titulo_peli}  en esta base de datos'
+    peli_index = peli_index.index[0]
     
 #encontramos los indices de las peliculas que mas similares a la pelicula ingresada.
     _, indices_peli_similares = clf.kneighbors(X[[peli_index]])
