@@ -4,7 +4,7 @@
  
 Trabajo en el rol de un ***MLOps Engineer***. 👩‍🔬
 
-
+Dataframes con los que se trabajo: [DATA-GOOGLE_DRIVE](https://drive.google.com/drive/folders/1HQoNpPcH7o1PDbTf2kQRecbot-LJE6M5?hl=es)
 
  **'Descripción del Proyecto'**
 El propósito de este proyecto es realizar la limpieza y preparación de datos relacionados con películas, así como desarrollar una API para facilitar la consulta de información. Esta plataforma permitirá a los usuarios obtener información detallada sobre películas y también acceder a un sistema de recomendación. 
