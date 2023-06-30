@@ -55,9 +55,7 @@ async def cantidad_filmaciones_dia(dia):
     #Por cada coincidencia, se agrega 1 al total de filmaciones.
     cantidad = sum(1 for fecha in fecha_formato_correcto if datetime.strptime(fecha, '%Y-%m-%d').weekday() == dias_semana[dia])
     
-    return {'cantidad': f"{cantidad} 'de peliculas fueron estrenadas'",
-            'mes': {mes}}
-
+    return f"{cantidad} cantidad de peliculas fueron estrenadas {dia}"
 
 @app.get("/score_titulo")
 async def score_titulo(titulo_de_la_filmacion):
