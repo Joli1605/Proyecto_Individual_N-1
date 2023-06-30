@@ -41,17 +41,17 @@ La API se encuentra en el siguiente enlace: [API Peliculas](https://proyecto-ind
 + def **Sistema_recomendacion( *`titulo`* )**:Implementa un sistema de recomendación de películas. Toma como entrada el título de una película y devuelve una lista de las 5 películas recomendadas basadas en la similitud de puntuación con la película ingresada.
 
 Esta API está implementada en Python utilizando FastAPI y Uvicorn;
-# Importa las bibliotecas necesarias
+** 'Importamos las bibliotecas necesarias' **
 from fastapi import FastAPI
 import uvicorn
 
-# Crea una instancia de la aplicación FastAPI
+** 'Creamos una instancia de la aplicación FastAPI' **
 app = FastAPI()
 
-# Define tus rutas y funciones
-# ...
+** 'Definimos rutas y funciones' **
+... 
 
-# Punto de entrada principal del programa
+** 'Punto de entrada principal del programa' **
 if __name__ == "__main__":
     # Inicia el servidor Uvicorn con la aplicación FastAPI
     uvicorn.run(app, host="0.0.0.0", port=8000)
